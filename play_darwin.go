@@ -8,11 +8,13 @@ package soundplayer
 
 #import <AVFoundation/AVFoundation.h>
 
+static AVPlayer* p;
+
 static int _play(const char* filename) {
     @autoreleasepool {
         NSURL* u = [NSURL fileURLWithPath:[NSString stringWithUTF8String:filename]];
 
-        AVPlayer* p = [AVPlayer playerWithURL:u];
+        p = [AVPlayer playerWithURL:u];
         [p play];
 
         NSTimeInterval played = 0.;
@@ -24,12 +26,23 @@ static int _play(const char* filename) {
             played = t;
 
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                     beforeDate:[[NSDate date] dateByAddingTimeInterval:.1]];
+                                    beforeDate:[[NSDate date] dateByAddingTimeInterval:.1]];
 
         }
 
         return 0;
     }
+}
+
+static void _pause() {
+    if (p) {
+        [p pause];
+    }
+}
+
+static void _stop() {
+    _pause();
+    p = nil;
 }
 
 */
@@ -53,4 +66,12 @@ func Play(filename string) error {
 		return errors.New("play error")
 	}
 	return nil
+}
+
+func Pause() {
+	C._pause()
+}
+
+func Stop() {
+	C._stop()
 }
